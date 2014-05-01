@@ -19,23 +19,24 @@ LevelService.prototype = function() {
         currentLevel = [];
         var levelMap = levels[level - 1];
         var renderedLevel = $(document.createElement('section'));
+        // Step 1: parse array, and create objects
         for (var rows = 0, max = levelMap.length; rows < max; ++rows) {
-            var cellRow = [];
+            var cellRow = [],
+                row = renderRow();
             for (var elem = 0, max2 = levelMap[rows].length; elem < max2; ++elem) {
                 var cell = new Cell(elem, rows, levelMap[rows][elem]);
                 cellRow.push(cell);
-            }
-            currentLevel.push(cellRow);
-        }
-        for (var rows = 0, max = currentLevel.length; rows < max; ++rows) {
-            var row = renderRow();
-            for (var elem = 0, max2 = currentLevel[rows].length; elem < max2; ++elem) {
-                row.append(currentLevel[rows][elem].render());
+                row.append(cell.render());
             }
             renderedLevel.append(row);
+            currentLevel.push(cellRow);
         }
+        $.event.trigger({
+            type: "levelParsed"
+        });
         return renderedLevel;
-    }
+    };
+
     var renderRow = function() {
         return $(document.createElement('ul')).addClass('hex-row');
     };
@@ -70,7 +71,7 @@ LevelService.prototype = function() {
             }
         }
         return count;
-    }
+    };
 
     return {
         getLevel: renderLevel,

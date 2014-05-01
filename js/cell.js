@@ -17,11 +17,6 @@ Cell.prototype = function() {
         } else if (this.entity === 'X') {
             this.type =  cellTypes.trap;
         }
-
-        if (!/^_/.test(this.entity)) {
-            if (this.entity === 'O') { this.marked = true;}
-        }
-
     };
 
     var registerMouseHandler = function() {
@@ -30,24 +25,24 @@ Cell.prototype = function() {
             this.element.on('click', function(e) {
                 e.preventDefault();
                 leftClickHandler.call(t);
-            })
+            });
             this.element.on('contextmenu', function(e) {
                 e.preventDefault();
                 rightClickHandler.call(t);
             });
-        };
+        }
     };
 
     var unregisterMouseHandler = function() {
         this.element.off('click contextmenu');
-    }
+    };
 
     var leftClickHandler = function() {
         if (this.type === cellTypes.trap) {
             this.element.addClass('marked');
             unregisterMouseHandler.call(this);
         }
-    }
+    };
 
     var rightClickHandler = function() {
         if (this.type === cellTypes.number) {
@@ -59,21 +54,30 @@ Cell.prototype = function() {
         if (this.type === cellTypes.trap) {
             shakeTween.call(this.element, 3);
         }
-    }
+    };
 
     var init = function() {
-        determineType.call(this);
-        createElement.call(this);
-        this.content = false;
-        registerMouseHandler.call(this);
-    }
+        var t = this;
+        determineType.call(t);
+        createElement.call(t);
+        t.content = false;
+        registerMouseHandler.call(t);
+        $(document).on('levelParsed', function() {
+            if (!/^_/.test(t.entity)) {
+                if (t.entity === 'O') {
+                    t.marked = true;
+                    t.render();
+                }
+            }
+        })
+    };
 
     var calculate = function() {
         if (this.type === cellTypes.number && this.content === false) {
             this.content = game.calculateHintAtPosition(this.x, this.y);
         }
         return this.content;
-    }
+    };
 
     var createElement = function() {
         this.element = $(document.createElement('li'));
@@ -101,22 +105,22 @@ Cell.prototype = function() {
 
     var isTrap = function() {
         return this.type === cellTypes.trap;
-    }
+    };
 
-    function shakeTween(repeatCount) {
+    var shakeTween = function (repeatCount) {
         var t = this;
         TweenMax.to(t, 0.1,{repeat:repeatCount-1, y:(1+Math.random()*5), x:(1+Math.random()*5), delay:0.1, ease:'Expo.easeInOut', onComplete: function() {
                 t.removeAttr('style');
         }});
-    }
+    };
 
 
-return {
+    return {
         render: render,
         init: init,
         isTypeOf: isTypeOf,
         isTrap: isTrap
-    }
+    };
 }();
 
 var cellTypes = new enums.Enum('free', 'number', 'trap');
