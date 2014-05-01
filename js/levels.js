@@ -43,33 +43,32 @@ LevelService.prototype = function() {
     var calculateDirectValue =  function(x, y) {
         var count = 0;
         if (y - 2 >= 0 && currentLevel[y - 2].length > x) {
-            if (currentLevel[y - 2][x].isTypeOf() === 'trap') { count += 1; }
+            if (currentLevel[y - 2][x].isTrap()) { count += 1; }
         }
         if (y + 2 < currentLevel.length && currentLevel[y + 2].length > x) {
-            if (currentLevel[y + 2][x].isTypeOf() === 'trap') { count += 1; }
+            if (currentLevel[y + 2][x].isTrap()) { count += 1; }
         }
         if (y + 1 < currentLevel.length && currentLevel[y + 1].length > x) {
-            if (currentLevel[y + 1][x].isTypeOf() === 'trap') { count += 1; }
+            if (currentLevel[y + 1][x].isTrap()) { count += 1; }
         }
         if (y - 1 >= 0 && currentLevel[y - 1].length > x) {
-            if (currentLevel[y - 1][x].isTypeOf() === 'trap') { count += 1; }
+            if (currentLevel[y - 1][x].isTrap()) { count += 1; }
         }
         if (y % 2 === 1) {
             if (y - 1 >= 0 && currentLevel[y - 1].length > x + 1) {
-                if (currentLevel[y - 1][x + 1].isTypeOf() === 'trap') { count += 1; }
+                if (currentLevel[y - 1][x + 1].isTrap()) { count += 1; }
             }
             if (y + 1 < currentLevel.length && currentLevel[y + 1].length > x + 1) {
-                if (currentLevel[y + 1][x + 1].isTypeOf() === 'trap') { count += 1; }
+                if (currentLevel[y + 1][x + 1].isTrap()) { count += 1; }
             }
         } else {
             if (y - 1 >= 0 && currentLevel[y - 1].length > x - 1 && x - 1 >= 0) {
-                if (currentLevel[y - 1][x - 1].isTypeOf() === 'trap') { count += 1; }
+                if (currentLevel[y - 1][x - 1].isTrap()) { count += 1; }
             }
             if (y + 1 < currentLevel.length && currentLevel[y + 1].length > x - 1 && x - 1 >= 0) {
-                if (currentLevel[y + 1][x - 1].isTypeOf() === 'trap') { count += 1; }
+                if (currentLevel[y + 1][x - 1].isTrap()) { count += 1; }
             }
         }
-
         return count;
     }
 

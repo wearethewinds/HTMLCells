@@ -11,11 +11,11 @@ Cell.prototype = function() {
 
     var determineType = function() {
         if (this.entity === ' ') {
-            this.type = 'free';
+            this.type = cellTypes.free;
         } else if (/^(.*?)O/.test(this.entity)) {
-            this.type = 'number';
+            this.type = cellTypes.number;
         } else if (this.entity === 'X') {
-            this.type = 'trap';
+            this.type =  cellTypes.trap;
         }
 
         if (!/^_/.test(this.entity)) {
@@ -26,7 +26,7 @@ Cell.prototype = function() {
 
     var registerMouseHandler = function() {
         var t = this;
-        if ((this.type === 'number' || this.type === 'trap') && !this.marked) {
+        if ((this.type === cellTypes.number || this.type === cellTypes.trap) && !this.marked) {
             this.element.on('click', function(e) {
                 e.preventDefault();
                 leftClickHandler.call(t);
@@ -43,20 +43,20 @@ Cell.prototype = function() {
     }
 
     var leftClickHandler = function() {
-        if (this.type === 'trap') {
+        if (this.type === cellTypes.trap) {
             this.element.addClass('marked');
             unregisterMouseHandler.call(this);
         }
     }
 
     var rightClickHandler = function() {
-        if (this.type === 'number') {
+        if (this.type === cellTypes.number) {
             this.element.addClass('open');
             this.marked = true;
             this.render();
             unregisterMouseHandler.call(this);
         }
-        if (this.type === 'trap') {
+        if (this.type === cellTypes.trap) {
             shakeTween.call(this.element, 3);
         }
     }
@@ -69,7 +69,7 @@ Cell.prototype = function() {
     }
 
     var calculate = function() {
-        if (this.type === 'number' && this.content === false) {
+        if (this.type === cellTypes.number && this.content === false) {
             this.content = game.calculateHintAtPosition(this.x, this.y);
         }
         return this.content;
@@ -83,10 +83,10 @@ Cell.prototype = function() {
 
     var render = function() {
         switch (this.type) {
-            case 'free':
+            case cellTypes.free:
                 this.element.addClass('hide');
                 break;
-            case 'number':
+            case cellTypes.number:
                 if (!this.marked) { break; }
                 this.element.find('span').html(calculate.call(this));
                 this.element.addClass('open');
@@ -99,6 +99,10 @@ Cell.prototype = function() {
         return this.type;
     };
 
+    var isTrap = function() {
+        return this.type === cellTypes.trap;
+    }
+
     function shakeTween(repeatCount) {
         var t = this;
         TweenMax.to(t, 0.1,{repeat:repeatCount-1, y:(1+Math.random()*5), x:(1+Math.random()*5), delay:0.1, ease:'Expo.easeInOut', onComplete: function() {
@@ -110,6 +114,9 @@ Cell.prototype = function() {
 return {
         render: render,
         init: init,
-        isTypeOf: isTypeOf
+        isTypeOf: isTypeOf,
+        isTrap: isTrap
     }
 }();
+
+var cellTypes = new enums.Enum('free', 'number', 'trap');
