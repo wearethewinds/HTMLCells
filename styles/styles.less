@@ -1,0 +1,86 @@
+@font-hex: 'Michroma', sans-serif;
+@color-hex-unrevealed: #FFAF2A;
+@color-hex-marked: #06A4EB;
+@color-hex-open: #3E3E3E;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: @font-hex;
+  color: white;
+}
+
+section {
+  text-align: center;
+}
+
+.hex-row {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  margin-top: -3.75em;
+}
+
+.hex-row:first-of-type {
+  margin-top: 0;
+}
+
+.hex {
+  margin: 0 6.5em 0.875em 1.875em;
+  height: 6.5em;
+  width: 3.75em;
+  background-color: @color-hex-unrevealed;
+  position: relative;
+  text-align: center;
+  line-height: 6.4em;
+  display: inline-block;
+  &:after {
+    content: "";
+    width: 0;
+    position: absolute;
+    right: -1.875em;
+    top: 0;
+    border-top: 3.25em solid transparent;
+    border-bottom: 3.25em solid transparent;
+    border-left: 1.875em solid @color-hex-unrevealed;
+  }
+  &:before {
+    content: " ";
+    width: 0; height: 0;
+    border-bottom: 3.25em solid transparent;
+    border-top: 3.25em solid transparent;
+    border-right: 1.875em solid @color-hex-unrevealed;
+    position: absolute;
+    top: 0;
+    left: -1.875em;
+  }
+  span {
+    font-size: 1.5em;
+    letter-spacing: 5px;
+    padding-left: 5px;
+  }
+
+  &.marked {
+    background-color: @color-hex-marked;
+    &:before {
+      border-right-color: @color-hex-marked;
+    }
+    &:after {
+      border-left-color: @color-hex-marked;
+    }
+  }
+  &.open {
+    background-color: @color-hex-open;
+    &:before {
+      border-right-color: @color-hex-open;
+    }
+    &:after {
+      border-left-color: @color-hex-open;
+    }
+  }
+  &.hide {
+    visibility: hidden;
+  }
+}
