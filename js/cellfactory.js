@@ -170,10 +170,10 @@ var CellFactory = function() {
             init: init,
             render: render,
             isTrap: isTrap
-        }
+        };
     }();
 
     return {
         create: create
-    }
+    };
 }();

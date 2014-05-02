@@ -1,6 +1,3 @@
-/**
- * Created by fabianpotschies on 01/05/14.
- */
 var Game = function() {
 
 };
@@ -12,14 +9,14 @@ Game.prototype = function() {
 
         createBox = function(id, header) {
             var box = $(document.createElement('section'))
-                .attr('id', id)
-                .addClass('statebox');
-            var header = $(document.createElement('h2'))
-                .addClass('header')
-                .html(header);
-            var value = $(document.createElement('div'))
-                .addClass('value');
-            box.append(header).append(value);
+                    .attr('id', id)
+                    .addClass('statebox'),
+                title = $(document.createElement('h2'))
+                    .addClass('header')
+                    .html(header),
+                value = $(document.createElement('div'))
+                    .addClass('value');
+            box.append(title).append(value);
             return box;
         },
 
