@@ -6,12 +6,59 @@ var Game = function() {
 };
 
 Game.prototype = function() {
-    var init = function() {
-        $('body').append(LevelService.getLevel(1));
-    };
+
+    var faultbox = false,
+        trapbox = false,
+
+        createBox = function(id, header) {
+            var box = $(document.createElement('section'))
+                .attr('id', id)
+                .addClass('statebox');
+            var header = $(document.createElement('h2'))
+                .addClass('header')
+                .html(header);
+            var value = $(document.createElement('div'))
+                .addClass('value');
+            box.append(header).append(value);
+            return box;
+        },
+
+        createFaultBox = function() {
+            faultbox = createBox('faultbox', 'mistakes');
+            faultbox.find('.value:first').html(0);
+            $('body').append(faultbox);
+        },
+
+        createRemainingTrapBox = function() {
+            trapbox = createBox('trapbox', 'remaining')
+            $('body').append(trapbox);
+        },
+
+        init = function() {
+            createFaultBox();
+            createRemainingTrapBox();
+            $('body').append(LevelService.getLevel(1));
+        },
+
+        increaseFaultCounter = function() {
+            var vl = faultbox.find('.value:first');
+            vl.html(parseInt(vl.html()) + 1);
+        },
+
+        updateTrapCounter = function(vl) {
+           trapbox.find('.value:first').html(vl);
+        },
+
+        decreaseTrapCounter = function() {
+            var vl = trapbox.find('.value:first');
+            vl.html(parseInt(vl.html()) - 1);
+        }
 
     return {
-        init: init
+        init: init,
+        updateTrapCounter: updateTrapCounter,
+        decreaseTrapCounter: decreaseTrapCounter,
+        increaseFaultCounter: increaseFaultCounter
     };
 }();
 

@@ -15,8 +15,42 @@ body {
   color: white;
 }
 
-section {
+#gameboard {
   text-align: center;
+}
+
+.statebox {
+  position: relative;
+  width: 20rem;
+  height: 8rem;
+  color: white;
+  background-color: @color-hex-marked;
+  text-transform: uppercase;
+  font-size: 24px;
+  .header {
+    position: absolute;
+    top: 0;
+    right: 0.5rem;
+    letter-spacing: -1px;
+    margin: 0;
+  }
+  .value {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+  }
+}
+
+#faultbox {
+  position: absolute;
+  right: 2rem;
+  top: 10.5rem;
+}
+
+#trapbox {
+  position: absolute;
+  right: 2rem;
+  top: 0.5rem;
 }
 
 .hex-row {
@@ -39,6 +73,7 @@ section {
   text-align: center;
   line-height: 6.4em;
   display: inline-block;
+  cursor: pointer;
   -webkit-transistion: @transistion-hex-backgroundcolor;
   -moz-transistion: @transistion-hex-backgroundcolor;
   -o-transistion: @transistion-hex-backgroundcolor;
@@ -83,6 +118,7 @@ section {
 
   &.marked {
     background-color: @color-hex-marked;
+    cursor: auto;
     &:before {
       border-right-color: @color-hex-marked;
     }
@@ -92,6 +128,7 @@ section {
   }
   &.open {
     background-color: @color-hex-open;
+    cursor: auto;
     &:before {
       border-right-color: @color-hex-open;
     }
@@ -101,5 +138,6 @@ section {
   }
   &.hide {
     visibility: hidden;
+    cursor: auto;
   }
 }

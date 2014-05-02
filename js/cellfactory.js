@@ -99,6 +99,7 @@ var CellFactory = function() {
             },
 
             leftClickHandler = function() {
+                game.increaseFaultCounter();
                 Animations.shake.call(this.element, 3);
             },
 
@@ -138,10 +139,12 @@ var CellFactory = function() {
             leftClickHandler = function() {
                 this.element.addClass('marked');
                 unregisterMouseHandler.call(this);
+                game.decreaseTrapCounter();
                 this.covert = false;
             },
 
             rightClickHandler = function() {
+                game.increaseFaultCounter();
                 Animations.shake.call(this.element, 3);
             };
 

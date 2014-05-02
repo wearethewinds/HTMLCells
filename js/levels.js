@@ -14,13 +14,15 @@ var LevelService = function() {
     ]);
     var renderLevel = function(level) {
         currentLevel = [];
-        var levelMap = levels[level - 1];
-        var renderedLevel = $(document.createElement('section'));
+        var levelMap = levels[level - 1],
+            renderedLevel = $(document.createElement('section')).attr('id', 'gameboard'),
+            trapCount = 0;
         // Step 1: parse array, and create objects
         for (var rows = 0, max = levelMap.length; rows < max; ++rows) {
             var cellRow = [],
                 row = renderRow();
             for (var elem = 0, max2 = levelMap[rows].length; elem < max2; ++elem) {
+                if (levelMap[rows][elem] === 'X') { trapCount += 1; }
                 var cell = CellFactory.create(elem, rows, levelMap[rows][elem]);
                 cellRow.push(cell);
                 row.append(cell.render());
@@ -31,6 +33,7 @@ var LevelService = function() {
         $.event.trigger({
             type: "levelParsed"
         });
+        game.updateTrapCounter(trapCount);
         return renderedLevel;
     };
 
