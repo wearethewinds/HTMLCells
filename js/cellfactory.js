@@ -74,7 +74,9 @@ var CellFactory = function() {
             } else if (entity === 'X') {
                 cell = new TrapCell(x, y);
             }
-            cell.init();
+            if (cell.init && typeof cell.init === 'function') {
+                cell.init();
+            }
             return cell;
         };
 
@@ -113,6 +115,7 @@ var CellFactory = function() {
             calculate = function() {
                 if (this.content === false) {
                     this.content = LevelService.calculateDirectValue(this.x, this.y);
+                    console.log(this.content);
                 }
                 return this.content;
             };
@@ -128,7 +131,6 @@ var CellFactory = function() {
         var init = function() {
                 var t = this;
                 t.element = createElement.call(t);
-                t.content = false;
                 registerMouseHandler.call(t, leftClickHandler, rightClickHandler);
             },
 

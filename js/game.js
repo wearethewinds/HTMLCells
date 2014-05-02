@@ -49,7 +49,7 @@ Game.prototype = function() {
         decreaseTrapCounter = function() {
             var vl = trapbox.find('.value:first');
             vl.html(parseInt(vl.html()) - 1);
-        }
+        };
 
     return {
         init: init,
