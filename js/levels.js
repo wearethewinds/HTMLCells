@@ -1,7 +1,4 @@
 var LevelService = function() {
-};
-
-LevelService.prototype = function() {
     var levels = [];
     var currentLevel = false;
     //LEVEL 1
@@ -24,7 +21,7 @@ LevelService.prototype = function() {
             var cellRow = [],
                 row = renderRow();
             for (var elem = 0, max2 = levelMap[rows].length; elem < max2; ++elem) {
-                var cell = new Cell(elem, rows, levelMap[rows][elem]);
+                var cell = CellFactory.create(elem, rows, levelMap[rows][elem]);
                 cellRow.push(cell);
                 row.append(cell.render());
             }
