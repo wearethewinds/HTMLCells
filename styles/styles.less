@@ -3,6 +3,9 @@
 @color-hex-marked: #06A4EB;
 @color-hex-open: #3E3E3E;
 
+@transistion-hex-backgroundcolor: background-color 500ms ease;
+@transistion-hex-bordercolor: border-color 500ms ease;
+
 * {
   box-sizing: border-box;
 }
@@ -36,6 +39,12 @@ section {
   text-align: center;
   line-height: 6.4em;
   display: inline-block;
+  -webkit-transistion: @transistion-hex-backgroundcolor;
+  -moz-transistion: @transistion-hex-backgroundcolor;
+  -o-transistion: @transistion-hex-backgroundcolor;
+  -ms-transistion: @transistion-hex-backgroundcolor;
+  transition: @transistion-hex-backgroundcolor;
+
   &:after {
     content: "";
     width: 0;
@@ -45,6 +54,11 @@ section {
     border-top: 3.25em solid transparent;
     border-bottom: 3.25em solid transparent;
     border-left: 1.875em solid @color-hex-unrevealed;
+    -webkit-transistion: @transistion-hex-bordercolor;
+    -moz-transistion: @transistion-hex-bordercolor;
+    -o-transistion: @transistion-hex-bordercolor;
+    -ms-transistion: @transistion-hex-bordercolor;
+    transition: @transistion-hex-bordercolor;
   }
   &:before {
     content: " ";
@@ -55,6 +69,11 @@ section {
     position: absolute;
     top: 0;
     left: -1.875em;
+    -webkit-transistion: @transistion-hex-bordercolor;
+    -moz-transistion: @transistion-hex-bordercolor;
+    -o-transistion: @transistion-hex-bordercolor;
+    -ms-transistion: @transistion-hex-bordercolor;
+    transition: @transistion-hex-bordercolor;
   }
   span {
     font-size: 1.5em;
