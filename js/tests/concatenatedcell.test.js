@@ -47,13 +47,13 @@ describe('ConcatenatedCell tests', function() {
         });
     });
 
-    describe('covert SimpleCell tests', function() {
+    describe('covert ConcatenatedCell tests', function() {
         var cell = false;
         beforeEach(function() {
             cell = CellFactory.create(0, 0, '_C');
         });
 
-        it('should instantiate a covert SimpleCell', function() {
+        it('should instantiate a covert ConcatenatedCell', function() {
             expect(cell.covert).toBe(true);
         });
 
