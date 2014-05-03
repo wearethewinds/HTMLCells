@@ -13,6 +13,7 @@
 body {
   font-family: @font-hex;
   color: white;
+  -webkit-font-smoothing: antialiased;
 }
 
 #gameboard {
@@ -38,17 +39,18 @@ body {
     position: absolute;
     bottom: 0.5rem;
     right: 0.5rem;
+    font-size: 2em;
   }
 }
 
 #faultbox {
-  position: absolute;
+  position: fixed;
   right: 2rem;
   top: 10.5rem;
 }
 
 #trapbox {
-  position: absolute;
+  position: fixed;
   right: 2rem;
   top: 0.5rem;
 }

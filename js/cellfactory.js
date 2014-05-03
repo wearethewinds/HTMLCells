@@ -15,6 +15,11 @@ var CellFactory = function() {
             this.y = y;
         },
 
+        ConcatenatedCell = function(x, y, covert) {
+            this.x = x;
+            this.y = y;
+        },
+
         registerMouseHandler = function(leftClick, rightClick) {
             var t = this;
             if (leftClick && typeof leftClick === 'function') {
@@ -48,6 +53,18 @@ var CellFactory = function() {
           return this instanceof TrapCell;
         },
 
+        hintCellleftClickHandler = function() {
+            game.increaseFaultCounter();
+            Animations.shake.call(this.element, 3);
+        },
+
+        hintCellrightClickHandler = function() {
+            this.element.addClass('open');
+            this.covert = false;
+            this.render();
+            unregisterMouseHandler.call(this);
+        },
+
         Animations = {
             shake: function(repeat) {
                 var t = this;
@@ -71,6 +88,8 @@ var CellFactory = function() {
                 cell = new FreeCell(x, y);
             } else if (/^(.*?)O/.test(entity)) {
                 cell = new SimpleCell(x, y, /^_/.test(entity));
+            } else if (/^(.*?)C/.test(entity)) {
+                cell = new ConcatenatedCell(x, y, /^_/.test(entity));
             } else if (entity === 'X') {
                 cell = new TrapCell(x, y);
             }
@@ -85,7 +104,7 @@ var CellFactory = function() {
                 var t = this;
                 t.element = createElement.call(t);
                 t.content = false;
-                registerMouseHandler.call(t, leftClickHandler, rightClickHandler);
+                registerMouseHandler.call(t, hintCellleftClickHandler, hintCellrightClickHandler);
                 $(document).on('levelParsed', function() {
                     t.initialized = true;
                     t.render();
@@ -100,22 +119,10 @@ var CellFactory = function() {
                 return this.element;
             },
 
-            leftClickHandler = function() {
-                game.increaseFaultCounter();
-                Animations.shake.call(this.element, 3);
-            },
-
-            rightClickHandler = function() {
-                this.element.addClass('open');
-                this.covert = false;
-                this.render();
-                unregisterMouseHandler.call(this);
-            },
-
             calculate = function() {
+                console.log(this);
                 if (this.content === false) {
                     this.content = LevelService.calculateDirectValue(this.x, this.y);
-                    console.log(this.content);
                 }
                 return this.content;
             };
@@ -125,6 +132,30 @@ var CellFactory = function() {
             render: render,
             isTrap: isTrap
         };
+    }();
+
+    ConcatenatedCell.prototype = function() {
+
+            var render = function() {
+                if (!this.covert && this.initialized) {
+                    this.element.find('span').html('{' + calculate.call(this) + '}');
+                    this.element.addClass('open');
+                }
+                return this.element;
+            },
+
+            calculate = function() {
+                if (this.content === false) {
+                    this.content = LevelService.calculateDirectValue(this.x, this.y);
+                }
+                return this.content;
+            }
+
+        return {
+            init: SimpleCell.prototype.init,
+            render: render,
+            isTrap: isTrap
+        }
     }();
 
     TrapCell.prototype = function() {

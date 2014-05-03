@@ -34,7 +34,7 @@ Game.prototype = function() {
         init = function() {
             createFaultBox();
             createRemainingTrapBox();
-            $('body').append(LevelService.getLevel(1));
+            $('body').append(LevelService.getLevel(3));
         },
 
         increaseFaultCounter = function() {

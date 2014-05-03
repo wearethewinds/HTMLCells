@@ -82,6 +82,7 @@ describe('SimpleCell tests', function() {
                 expect(cell.element[0].classList.length).toEqual(1);
                 expect(cell.element[0].classList[0]).toEqual('hex');
             });
+
             describe('covert SimpleCell tests after triggering right click', function() {
                 beforeEach(function() {
                     cell.element.trigger('contextmenu');
