@@ -18,6 +18,7 @@ var CellFactory = function() {
         ConcatenatedCell = function(x, y, covert) {
             this.x = x;
             this.y = y;
+            this.covert = covert;
         },
 
         registerMouseHandler = function(leftClick, rightClick) {
@@ -86,9 +87,9 @@ var CellFactory = function() {
             var cell = false;
             if (entity === ' ') {
                 cell = new FreeCell(x, y);
-            } else if (/^(.*?)O/.test(entity)) {
+            } else if (/^(.*?)O\b/.test(entity)) {
                 cell = new SimpleCell(x, y, /^_/.test(entity));
-            } else if (/^(.*?)C/.test(entity)) {
+            } else if (/^(.*?)C\b/.test(entity)) {
                 cell = new ConcatenatedCell(x, y, /^_/.test(entity));
             } else if (entity === 'X') {
                 cell = new TrapCell(x, y);
@@ -120,7 +121,6 @@ var CellFactory = function() {
             },
 
             calculate = function() {
-                console.log(this);
                 if (this.content === false) {
                     this.content = LevelService.calculateDirectValue(this.x, this.y);
                 }
