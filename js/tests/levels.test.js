@@ -10,10 +10,14 @@ describe('LevelService test', function() {
     });
 
     it('should return three surrounding traps for cell (x: 2, y: 0) in level 1', function() {
-       expect(LevelService.calculateDirectValue(2, 0)).toEqual(3);
+       expect(LevelService.calculateSurroundingValue(2, 0, 1)).toEqual(3);
+    });
+
+    it('should return two surrounding traps for cell (x: 0, y: 3) in level 1', function() {
+        expect(LevelService.calculateSurroundingValue(0, 3, 1)).toEqual(2);
     });
 
     it('should return no surrounding traps for cell (x: 0, y: 2) in level 1', function() {
-        expect(LevelService.calculateDirectValue(0, 2)).toEqual(0);
+        expect(LevelService.calculateSurroundingValue(0, 2, 1)).toEqual(0);
     });
 });

@@ -5,17 +5,31 @@ var CellFactory = function() {
             this.y = y;
             this.covert = covert;
         },
-        TrapCell = function(x, y) {
+
+        TrapCell = function(x, y, marked) {
             this.x = x;
             this.y = y;
-            this.covert = true;
+            this.marked = marked;
         },
+
+        HintTrapCell = function(x, y, marked) {
+            this.x = x;
+            this.y = y;
+            this.marked = marked;
+        },
+
         FreeCell = function(x, y) {
             this.x = x;
             this.y = y;
         },
 
         ConcatenatedCell = function(x, y, covert) {
+            this.x = x;
+            this.y = y;
+            this.covert = covert;
+        },
+
+        DisruptedCell = function(x, y, covert) {
             this.x = x;
             this.y = y;
             this.covert = covert;
@@ -51,7 +65,7 @@ var CellFactory = function() {
         },
 
         isTrap = function() {
-          return this instanceof TrapCell;
+          return (this instanceof TrapCell) || (this instanceof HintTrapCell);
         },
 
         hintCellleftClickHandler = function() {
@@ -70,12 +84,16 @@ var CellFactory = function() {
             var cell = false;
             if (entity === ' ') {
                 cell = new FreeCell(x, y);
-            } else if (/^(.*?)O\b/.test(entity)) {
+            } else if (/^(_?)O\b/.test(entity)) {
                 cell = new SimpleCell(x, y, /^_/.test(entity));
-            } else if (/^(.*?)C\b/.test(entity)) {
+            } else if (/^(_?)C\b/.test(entity)) {
                 cell = new ConcatenatedCell(x, y, /^_/.test(entity));
-            } else if (entity === 'X') {
-                cell = new TrapCell(x, y);
+            } else if (/^(_?)X\b/.test(entity)) {
+                cell = new TrapCell(x, y, /^_/.test(entity));
+            } else if(/^(_?)D\b/.test(entity)) {
+                cell = new DisruptedCell(x, y, /^_/.test(entity));
+            } else if (/^(_?)H\b/.test(entity)) {
+                cell = new HintTrapCell(x, y, /^_/.test(entity));
             }
             if (cell.init && typeof cell.init === 'function') {
                 cell.init();
@@ -105,7 +123,7 @@ var CellFactory = function() {
 
             calculate = function() {
                 if (this.content === false) {
-                    this.content = LevelService.calculateDirectValue(this.x, this.y);
+                    this.content = LevelService.calculateSurroundingValue(this.x, this.y, 1);
                 }
                 return this.content;
             };
@@ -129,7 +147,31 @@ var CellFactory = function() {
 
             calculate = function() {
                 if (this.content === false) {
-                    this.content = LevelService.calculateDirectValue(this.x, this.y);
+                    this.content = LevelService.calculateSurroundingValue(this.x, this.y, 1);
+                }
+                return this.content;
+            }
+
+        return {
+            init: SimpleCell.prototype.init,
+            render: render,
+            isTrap: isTrap
+        }
+    }();
+
+    DisruptedCell.prototype = function() {
+
+        var render = function() {
+                if (!this.covert && this.initialized) {
+                    this.element.find('span').html('-' + calculate.call(this) + '-');
+                    this.element.addClass('open');
+                }
+                return this.element;
+            },
+
+            calculate = function() {
+                if (this.content === false) {
+                    this.content = LevelService.calculateSurroundingValue(this.x, this.y, 1);
                 }
                 return this.content;
             }
@@ -144,6 +186,43 @@ var CellFactory = function() {
     TrapCell.prototype = function() {
         var init = function() {
                 var t = this;
+                t.element = createElement.call(t);
+                if (!t.marked) {
+                    registerMouseHandler.call(t, leftClickHandler, rightClickHandler);
+                }
+
+            },
+
+            render = function() {
+                if (this.marked) {
+                    this.element.addClass('marked');
+                }
+                return this.element;
+            },
+
+            leftClickHandler = function() {
+                this.element.addClass('marked');
+                unregisterMouseHandler.call(this);
+                game.decreaseTrapCounter();
+                this.marked = true;
+            },
+
+            rightClickHandler = function() {
+                game.increaseFaultCounter();
+                Animations.shake.call(this.element, 3);
+            };
+
+        return {
+            init: init,
+            render: render,
+            isTrap: isTrap
+        };
+    }();
+
+    HintTrapCell.prototype = function() {
+        var init = function() {
+                var t = this;
+                t.content = false;
                 t.element = createElement.call(t);
                 registerMouseHandler.call(t, leftClickHandler, rightClickHandler);
             },

@@ -76,7 +76,7 @@ var LevelService = function() {
         return $(document.createElement('ul')).addClass('hex-row');
     };
 
-    var calculateDirectValue =  function(x, y) {
+    /*var calculateDirectValue =  function(x, y) {
         var count = 0;
         if (y - 2 >= 0 && currentLevel[y - 2].length > x) {
             if (currentLevel[y - 2][x].isTrap()) { count += 1; }
@@ -106,10 +106,77 @@ var LevelService = function() {
             }
         }
         return count;
+    };*/
+
+    var calculateSurroundingValue = function(x, y, depth) {
+        var count = 0;
+        for (var rows = depth; rows >= 0; --rows) {
+            if (rows % 2 === 0) {
+                var elemCount = 2 * depth + 1 - rows;
+                for (var elem = 0, max = Math.floor(elemCount / 2); elem < max; ++elem) {
+                    var newX = Math.ceil(rows / 2),
+                        newY = (max * 2) - (elem * 2);
+                    console.log(newY);
+                    if (y - newY >= 0 && currentLevel[y - newY].length > x - newX && x - newX >= 0) {
+                        if (currentLevel[y - newY][x - newX].isTrap()) { count += 1; }
+                    }
+                    if (elem > 0 && y + newY < currentLevel.length && currentLevel[y + newY].length > x - newX && x - newX >= 0) {
+                        if (currentLevel[y + newY][x - newX].isTrap()) { count += 1; }
+                    }
+                    if (y + newY < currentLevel.length && currentLevel[y + newY].length > x + newX && x + newX >= 0) {
+                        if (currentLevel[y + newY][x + newX].isTrap()) { count += 1; }
+                    }
+                    if (elem > 0 && y - newY >= 0 && currentLevel[y - newY].length > x + newX && x + newX >= 0) {
+                        if (currentLevel[y - newY][x + newX].isTrap()) { count += 1; }
+                    }
+                }
+            } else {
+                if (y % 2 === 0) {
+                    var elemCount = 2 * depth + 1 - rows;
+                    for (var elem = 0, max = Math.floor(elemCount / 2); elem < max; ++elem) {
+                        var newX = Math.ceil(rows / 2),
+                            newY = 2 * elem + 1;
+                        if (y - newY >= 0 && currentLevel[y - newY].length > x - newX && x - newX >= 0) {
+                            if (currentLevel[y - newY][x - newX].isTrap()) { if (y===0) console.log(elem);count += 1; }
+                        }
+                        if (y + newY < currentLevel.length && currentLevel[y + newY].length > x - newX && x - newX >= 0) {
+                            if (currentLevel[y + newY][x - newX].isTrap()) { if (y===0) console.log(elem);count += 1; }
+                        }
+                        if (y + newY < currentLevel.length && currentLevel[y + newY].length > x && x >= 0) {
+                            if (currentLevel[y + newY][x].isTrap()) { if (y===0) console.log(elem);count += 1; }
+                        }
+                        if (y - newY >= 0 && currentLevel[y - newY].length > x && x >= 0) {
+                            if (currentLevel[y - newY][x].isTrap()) { if (y===0) console.log(elem);count += 1; }
+                        }
+                    }
+                }
+                else if (y % 2 === 1) {
+                    var elemCount = 2 * depth + 1 - rows;
+                    for (var elem = 0, max = Math.floor(elemCount / 2); elem < max; ++elem) {
+                        var newX = Math.ceil(rows / 2),
+                            newY = 2 * elem + 1;
+                        if (y - newY >= 0 && currentLevel[y - newY].length > x + newX && x + newX >= 0) {
+                            if (currentLevel[y - newY][x + newX].isTrap()) { count += 1; }
+                        }
+                        if (y + newY < currentLevel.length && currentLevel[y + newY].length > x + newX && x + newX >= 0) {
+                            if (currentLevel[y + newY][x + newX].isTrap()) { count += 1; }
+                        }
+                        if (y + newY < currentLevel.length && currentLevel[y + newY].length > x && x >= 0) {
+                            if (currentLevel[y + newY][x].isTrap()) { count += 1; }
+                        }
+                        if (y - newY >= 0 && currentLevel[y - newY].length > x && x >= 0) {
+                            if (currentLevel[y - newY][x].isTrap()) { count += 1; }
+                        }
+                    }
+                }
+            }
+        }
+
+      return count;
     };
 
     return {
         getLevel: renderLevel,
-        calculateDirectValue: calculateDirectValue
+        calculateSurroundingValue: calculateSurroundingValue
     };
 }();
