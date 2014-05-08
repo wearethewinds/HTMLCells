@@ -80,6 +80,10 @@ var CellFactory = function() {
             unregisterMouseHandler.call(this);
         },
 
+        highlite = function() {
+            this.element.css({opacity: 0.5});
+        },
+
         create = function(x, y, entity) {
             var cell = false;
             if (entity === ' ') {
@@ -123,7 +127,7 @@ var CellFactory = function() {
 
             calculate = function() {
                 if (this.content === false) {
-                    this.content = LevelService.calculateSurroundingValue(this.x, this.y, 1);
+                    this.content = LevelService.getSurroundingTrapCount(this.x, this.y, 1);
                 }
                 return this.content;
             };
@@ -147,7 +151,7 @@ var CellFactory = function() {
 
             calculate = function() {
                 if (this.content === false) {
-                    this.content = LevelService.calculateSurroundingValue(this.x, this.y, 1);
+                    this.content = LevelService.getSurroundingTrapCount(this.x, this.y, 1);
                 }
                 return this.content;
             }
@@ -171,7 +175,7 @@ var CellFactory = function() {
 
             calculate = function() {
                 if (this.content === false) {
-                    this.content = LevelService.calculateSurroundingValue(this.x, this.y, 1);
+                    this.content = LevelService.getSurroundingTrapCount(this.x, this.y, 1);
                 }
                 return this.content;
             }
@@ -215,7 +219,8 @@ var CellFactory = function() {
         return {
             init: init,
             render: render,
-            isTrap: isTrap
+            isTrap: isTrap,
+            highlite: highlite
         };
     }();
 
@@ -246,7 +251,8 @@ var CellFactory = function() {
         return {
             init: init,
             render: render,
-            isTrap: isTrap
+            isTrap: isTrap,
+            highlite: highlite
         };
     }();
 

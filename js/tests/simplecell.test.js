@@ -2,7 +2,10 @@ describe('SimpleCell tests', function() {
     describe('uncovert SimpleCell tests', function() {
         var cell = false;
         beforeEach(function() {
-           cell = CellFactory.create(0, 0, 'O');
+            var game = new Game();
+            console.log(game);
+            game.init().setLevel(['C']);
+            cell = CellFactory.create(0, 0, 'O');
         });
 
         it('should instantiate a covert SimpleCell', function() {

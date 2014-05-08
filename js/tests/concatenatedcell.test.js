@@ -2,7 +2,9 @@ describe('ConcatenatedCell tests', function() {
     describe('uncovert ConcatenatedCell tests', function() {
         var cell = false;
         beforeEach(function() {
-           cell = CellFactory.create(0, 0, 'C');
+            var game = new Game();
+            game.init().setLevel(['C']);
+            cell = CellFactory.create(1, 0, 'C');
         });
 
         it('should instantiate a uncovert ConcatenatedCell', function() {

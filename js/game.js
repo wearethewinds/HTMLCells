@@ -34,10 +34,11 @@ Game.prototype = function() {
         init = function() {
             createFaultBox();
             createRemainingTrapBox();
-            $('body').append(LevelService.getLevel(1));
+            return this;
         },
 
         increaseFaultCounter = function() {
+            var t = this;
             var vl = faultbox.find('.value:first');
             vl.html(parseInt(vl.html()) + 1);
         },
@@ -49,15 +50,23 @@ Game.prototype = function() {
         decreaseTrapCounter = function() {
             var vl = trapbox.find('.value:first');
             vl.html(parseInt(vl.html()) - 1);
+        },
+
+        setLevel = function(level) {
+            $('#gameboard').remove();
+
+            $('body').append(LevelService.getLevel(level));
         };
 
     return {
         init: init,
         updateTrapCounter: updateTrapCounter,
         decreaseTrapCounter: decreaseTrapCounter,
-        increaseFaultCounter: increaseFaultCounter
+        increaseFaultCounter: increaseFaultCounter,
+        setLevel: setLevel
     };
 }();
 
 var game = new Game();
-game.init();
+game.init()
+    .setLevel(3);

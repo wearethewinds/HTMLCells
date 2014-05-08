@@ -2,7 +2,10 @@ describe('DisruptedCell tests', function() {
     describe('uncovert DisruptedCell tests', function() {
         var cell = false;
         beforeEach(function() {
-           cell = CellFactory.create(0, 0, 'D');
+            var game = new Game();
+            console.log(game);
+            game.init().setLevel(['C']);
+            cell = CellFactory.create(0, 0, 'D');
         });
 
         it('should instantiate a uncovert DisruptedCell', function() {
