@@ -48,15 +48,15 @@ var LevelService = function() {
         [' ', ' ', 'X', ' ', ' ']
     ]);
     levels.push([
-        [' ', '_H', ' '],
-        ['X', '_O'],
-        ['_O', 'X', '_O'],
-        ['X', '_O'],
-        ['X', 'O', 'X'],
-        ['X', '_O'],
-        ['_O', 'X', '_O'],
-        ['X', '_O'],
-        [' ', '_H', ' ']
+        [' ', 'H', ' '],
+        ['X', 'O'],
+        ['O', 'X', 'O'],
+        ['X', 'O'],
+        ['X', '_O', 'X'],
+        ['X', 'O'],
+        ['O', 'X', 'O'],
+        ['X', 'O'],
+        [' ', 'H', ' ']
     ]);
     var renderLevel = function(level) {
 
@@ -130,63 +130,67 @@ var LevelService = function() {
         return count;
     };*/
 
-    var getSurroundingTraps = function(x, y, depth, callback) {
-        var elements = [];
+    var getCells = function(x, y, depth, condition, callback) {
+        var elements = [],
+            elemCount = 0,
+            newX = 0,
+            newY = 0,
+            elem = null;
         for (var rows = depth; rows >= 0; --rows) {
             if (rows % 2 === 0) {
-                var elemCount = 2 * depth + 1 - rows;
-                for (var elem = 0, max = Math.floor(elemCount / 2); elem <= max; ++elem) {
-                    var newX = Math.ceil(rows / 2),
-                        newY = (max * 2) - (elem * 2);
+                elemCount = 2 * depth + 1 - rows;
+                for (elem = 0, max = Math.floor(elemCount / 2); elem <= max; ++elem) {
+                    newX = Math.ceil(rows / 2);
+                    newY = (max * 2) - (elem * 2);
                     if (y - newY >= 0 && currentLevel[y - newY].length > x - newX && x - newX >= 0) {
-                        if (currentLevel[y - newY][x - newX].isTrap()) { elements.push(currentLevel[y - newY][x - newX]); }
+                        if (condition(currentLevel[y - newY][x - newX])) { elements.push(currentLevel[y - newY][x - newX]); }
                     }
                     if (rows > 0 && elem !== max && y + newY < currentLevel.length && currentLevel[y + newY].length > x - newX && x - newX >= 0) {
-                        if (currentLevel[y + newY][x - newX].isTrap()) { elements.push(currentLevel[y + newY][x - newX]); }
+                        if (condition(currentLevel[y + newY][x - newX])) { elements.push(currentLevel[y + newY][x - newX]); }
                     }
                     if (y + newY < currentLevel.length && currentLevel[y + newY].length > x + newX && x + newX >= 0) {
-                        if (currentLevel[y + newY][x + newX].isTrap()) { elements.push(currentLevel[y + newY][x + newX]); }
+                        if (condition(currentLevel[y + newY][x + newX])) { elements.push(currentLevel[y + newY][x + newX]); }
                     }
                     if (rows > 0 && elem !== max && y - newY >= 0 && currentLevel[y - newY].length > x + newX && x + newX >= 0) {
-                        if (currentLevel[y - newY][x + newX].isTrap()) { elements.push(currentLevel[y - newY][x + newX]); }
+                        if (condition(currentLevel[y - newY][x + newX])) { elements.push(currentLevel[y - newY][x + newX]); }
                     }
                 }
             } else {
                 if (y % 2 === 0) {
-                    var elemCount = 2 * depth + 1 - rows;
-                    for (var elem = 0, max = Math.floor(elemCount / 2); elem < max; ++elem) {
-                        var newX = Math.ceil(rows / 2),
-                            newY = 2 * elem + 1;
+                    elemCount = 2 * depth + 1 - rows;
+                    for (elem = 0, max = Math.floor(elemCount / 2); elem < max; ++elem) {
+                        newX = Math.ceil(rows / 2);
+                        newY = 2 * elem + 1;
                         if (y - newY >= 0 && currentLevel[y - newY].length > x - newX && x - newX >= 0) {
-                            if (currentLevel[y - newY][x - newX].isTrap()) { elements.push(currentLevel[y - newY][x - newX]); }
+                            if (condition(currentLevel[y - newY][x - newX])) { elements.push(currentLevel[y - newY][x - newX]); }
                         }
                         if (y + newY < currentLevel.length && currentLevel[y + newY].length > x - newX && x - newX >= 0) {
-                            if (currentLevel[y + newY][x - newX].isTrap()) { elements.push(currentLevel[y + newY][x - newX]); }
+                            if (condition(currentLevel[y + newY][x - newX])) { elements.push(currentLevel[y + newY][x - newX]); }
                         }
                         if (y + newY < currentLevel.length && currentLevel[y + newY].length > x && x >= 0) {
-                            if (currentLevel[y + newY][x].isTrap()) { elements.push(currentLevel[y + newY][x]); }
+                            if (condition(currentLevel[y + newY][x])) { elements.push(currentLevel[y + newY][x]); }
                         }
                         if (y - newY >= 0 && currentLevel[y - newY].length > x && x >= 0) {
-                            if (currentLevel[y - newY][x].isTrap()) { elements.push(currentLevel[y - newY][x]); }
+                            if (condition(currentLevel[y - newY][x])) { elements.push(currentLevel[y - newY][x]); }
                         }
                     }
                 }
                 else if (y % 2 === 1) {
-                    var elemCount = 2 * depth + 1 - rows;
-                    for (var elem = 0, max = Math.floor(elemCount / 2); elem < max; ++elem) {
-                        var newX = Math.ceil(rows / 2),
-                            newY = 2 * elem + 1;
+                    elemCount = 2 * depth + 1 - rows;
+                    for (elem = 0, max = Math.floor(elemCount / 2); elem < max; ++elem) {
+                        newX = Math.ceil(rows / 2);
+                        newY = 2 * elem + 1;
                         if (y - newY >= 0 && currentLevel[y - newY].length > x + newX && x + newX >= 0) {
-                            if (currentLevel[y - newY][x + newX].isTrap()) { elements.push(currentLevel[y - newY][x + newX]); }
+                            if (condition(currentLevel[y - newY][x + newX])) { elements.push(currentLevel[y - newY][x + newX]); }
                         }
                         if (y + newY < currentLevel.length && currentLevel[y + newY].length > x + newX && x + newX >= 0) {
-                            if (currentLevel[y + newY][x + newX].isTrap()) { elements.push(currentLevel[y + newY][x + newX]); }
+                            if (condition(currentLevel[y + newY][x + newX])) { elements.push(currentLevel[y + newY][x + newX]); }
                         }
                         if (y + newY < currentLevel.length && currentLevel[y + newY].length > x && x >= 0) {
-                            if (currentLevel[y + newY][x].isTrap()) { elements.push(currentLevel[y + newY][x]); }
+                            if (condition(currentLevel[y + newY][x])) { elements.push(currentLevel[y + newY][x]); }
                         }
                         if (y - newY >= 0 && currentLevel[y - newY].length > x && x >= 0) {
-                            if (currentLevel[y - newY][x].isTrap()) { elements.push(currentLevel[y - newY][x]); }
+                            if (condition(currentLevel[y - newY][x])) { elements.push(currentLevel[y - newY][x]); }
                         }
                     }
                 }
@@ -198,14 +202,24 @@ var LevelService = function() {
     return {
         getLevel: renderLevel,
         getSurroundingTrapCount: function(x, y, depth) {
-            this.highliteSurroundingCells(x, y, depth);
-            return getSurroundingTraps(x, y, depth, function(elements) {
+            return getCells(x, y, depth, function(cell) {
+                return typeof cell.isTrap === 'function' && cell.isTrap();
+            }, function(elements) {
                return elements.length;
             });
         },
         highliteSurroundingCells: function(x, y, depth) {
-            return getSurroundingTraps(x, y, depth, function(elements) {
+            return getCells(x, y, depth, function(cell) {
+                return !!cell;
+            }, function(elements) {
                 $.each(elements, function() { this.highlite(); });
+            });
+        },
+        unliteSurroundingCells: function(x, y, depth) {
+            return getCells(x, y, depth, function(cell) {
+                return !!cell;
+            }, function (elements) {
+                $.each(elements, function () { this.unlite(); })
             });
         },
         getCellAt: getCellAt

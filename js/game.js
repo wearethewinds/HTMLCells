@@ -27,7 +27,7 @@ Game.prototype = function() {
         },
 
         createRemainingTrapBox = function() {
-            trapbox = createBox('trapbox', 'remaining')
+            trapbox = createBox('trapbox', 'remaining');
             $('body').append(trapbox);
         },
 
@@ -38,7 +38,6 @@ Game.prototype = function() {
         },
 
         increaseFaultCounter = function() {
-            var t = this;
             var vl = faultbox.find('.value:first');
             vl.html(parseInt(vl.html()) + 1);
         },
@@ -69,4 +68,4 @@ Game.prototype = function() {
 
 var game = new Game();
 game.init()
-    .setLevel(3);
+    .setLevel(4);

@@ -1,27 +1,10 @@
 var CellFactory = function() {
 
-    var SimpleCell = function(x, y, covert) {
-            this.x = x;
-            this.y = y;
-            this.covert = covert;
-        },
-
-        TrapCell = function(x, y, marked) {
+    var /*HintTrapCell = function(x, y, marked) {
             this.x = x;
             this.y = y;
             this.marked = marked;
-        },
-
-        HintTrapCell = function(x, y, marked) {
-            this.x = x;
-            this.y = y;
-            this.marked = marked;
-        },
-
-        FreeCell = function(x, y) {
-            this.x = x;
-            this.y = y;
-        },
+        },*/
 
         ConcatenatedCell = function(x, y, covert) {
             this.x = x;
@@ -68,12 +51,13 @@ var CellFactory = function() {
           return (this instanceof TrapCell) || (this instanceof HintTrapCell);
         },
 
-        hintCellleftClickHandler = function() {
+        leftClickHandler = function() {
+            if (!this.covert) { return; }
             game.increaseFaultCounter();
             Animations.shake.call(this.element, 3);
         },
 
-        hintCellrightClickHandler = function() {
+        rightClickHsndler = function() {
             this.element.addClass('open');
             this.covert = false;
             this.render();
@@ -81,23 +65,35 @@ var CellFactory = function() {
         },
 
         highlite = function() {
-            this.element.css({opacity: 0.5});
+            if (!this.highlit) {
+                this.element.css({opacity: 0.5});
+                this.highlit = true;
+            }
+            else {
+                this.element.css({opacity: ''});
+                this.highlit = false;
+            }
         },
 
         create = function(x, y, entity) {
             var cell = false;
+            var params = {
+                x: x,
+                y: y,
+                covert: !/^_/.test(entity)
+            };
             if (entity === ' ') {
                 cell = new FreeCell(x, y);
             } else if (/^(_?)O\b/.test(entity)) {
-                cell = new SimpleCell(x, y, /^_/.test(entity));
+                cell = new SimpleCell(params);
             } else if (/^(_?)C\b/.test(entity)) {
                 cell = new ConcatenatedCell(x, y, /^_/.test(entity));
             } else if (/^(_?)X\b/.test(entity)) {
-                cell = new TrapCell(x, y, /^_/.test(entity));
+                cell = new TrapCell(params);
             } else if(/^(_?)D\b/.test(entity)) {
                 cell = new DisruptedCell(x, y, /^_/.test(entity));
             } else if (/^(_?)H\b/.test(entity)) {
-                cell = new HintTrapCell(x, y, /^_/.test(entity));
+                cell = new HintTrapCell(params);
             }
             if (cell.init && typeof cell.init === 'function') {
                 cell.init();
@@ -105,41 +101,18 @@ var CellFactory = function() {
             return cell;
         };
 
-    SimpleCell.prototype = function() {
+    ConcatenatedCell.prototype = function() {
+
         var init = function() {
                 var t = this;
                 t.element = createElement.call(t);
-                t.content = false;
-                registerMouseHandler.call(t, hintCellleftClickHandler, hintCellrightClickHandler);
+                t.content = null;
+                registerMouseHandler.call(t, leftClickHandler, rightClickHsndler);
                 $(document).on('levelParsed', function() {
                     t.initialized = true;
                     t.render();
                 });
-            },
-
-            render = function() {
-                if (!this.covert && this.initialized) {
-                    this.element.find('span').html(calculate.call(this));
-                    this.element.addClass('open');
-                }
-                return this.element;
-            },
-
-            calculate = function() {
-                if (this.content === false) {
-                    this.content = LevelService.getSurroundingTrapCount(this.x, this.y, 1);
-                }
-                return this.content;
             };
-
-        return {
-            init: init,
-            render: render,
-            isTrap: isTrap
-        };
-    }();
-
-    ConcatenatedCell.prototype = function() {
 
             var render = function() {
                 if (!this.covert && this.initialized) {
@@ -154,16 +127,28 @@ var CellFactory = function() {
                     this.content = LevelService.getSurroundingTrapCount(this.x, this.y, 1);
                 }
                 return this.content;
-            }
+            };
 
         return {
-            init: SimpleCell.prototype.init,
+            highlite: highlite,
+            init: init,
             render: render,
             isTrap: isTrap
         }
     }();
 
     DisruptedCell.prototype = function() {
+
+        var init = function() {
+                var t = this;
+                t.element = createElement.call(t);
+                t.content = null;
+                registerMouseHandler.call(t, leftClickHandler, rightClickHsndler);
+                $(document).on('levelParsed', function() {
+                    t.initialized = true;
+                    t.render();
+                });
+            };
 
         var render = function() {
                 if (!this.covert && this.initialized) {
@@ -178,37 +163,59 @@ var CellFactory = function() {
                     this.content = LevelService.getSurroundingTrapCount(this.x, this.y, 1);
                 }
                 return this.content;
-            }
+            };
 
         return {
-            init: SimpleCell.prototype.init,
+            highlite: highlite,
+            init: init,
             render: render,
             isTrap: isTrap
         }
     }();
 
-    TrapCell.prototype = function() {
+    /*HintTrapCell.prototype = function() {
         var init = function() {
                 var t = this;
+                t.content = null;
                 t.element = createElement.call(t);
+                t.depth = 2;
                 if (!t.marked) {
-                    registerMouseHandler.call(t, leftClickHandler, rightClickHandler);
+                    registerMouseHandler.call(t, hintLeftClickHandler);
+                } else {
+                    registerMouseHandler.call(t, trapLeftClickHandler, rightClickHandler);
                 }
-
+                $(document).on('levelParsed', function() {
+                    t.initialized = true;
+                    t.render();
+                });
             },
 
             render = function() {
-                if (this.marked) {
+                if (!this.marked && this.initialized) {
+                    this.element.find('span').html(calculate.call(this));
                     this.element.addClass('marked');
                 }
                 return this.element;
             },
 
-            leftClickHandler = function() {
+            calculate = function() {
+                if (this.content === null) {
+                    this.content = LevelService.getSurroundingTrapCount(this.x, this.y, this.depth);
+                }
+                return this.content;
+            },
+
+            trapLeftClickHandler = function() {
                 this.element.addClass('marked');
                 unregisterMouseHandler.call(this);
+                registerMouseHandler.call(this, hintLeftClickHandler);
                 game.decreaseTrapCounter();
-                this.marked = true;
+                this.marked = false;
+                this.render();
+            },
+
+            hintLeftClickHandler = function () {
+              LevelService.highliteSurroundingCells(this.x, this.y, this.depth);
             },
 
             rightClickHandler = function() {
@@ -222,57 +229,7 @@ var CellFactory = function() {
             isTrap: isTrap,
             highlite: highlite
         };
-    }();
-
-    HintTrapCell.prototype = function() {
-        var init = function() {
-                var t = this;
-                t.content = false;
-                t.element = createElement.call(t);
-                registerMouseHandler.call(t, leftClickHandler, rightClickHandler);
-            },
-
-            render = function() {
-                return this.element;
-            },
-
-            leftClickHandler = function() {
-                this.element.addClass('marked');
-                unregisterMouseHandler.call(this);
-                game.decreaseTrapCounter();
-                this.covert = false;
-            },
-
-            rightClickHandler = function() {
-                game.increaseFaultCounter();
-                Animations.shake.call(this.element, 3);
-            };
-
-        return {
-            init: init,
-            render: render,
-            isTrap: isTrap,
-            highlite: highlite
-        };
-    }();
-
-    FreeCell.prototype = function() {
-        var init = function() {
-                var t = this;
-                t.element = createElement.call(t);
-            },
-
-            render = function() {
-                this.element.addClass('hide');
-                return this.element;
-            };
-
-        return {
-            init: init,
-            render: render,
-            isTrap: isTrap
-        };
-    }();
+    }();*/
 
     return {
         create: create
