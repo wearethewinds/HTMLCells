@@ -15,10 +15,15 @@ var TrapCell = function(){
 TrapCell.prototype = new BasicCell();
 TrapCell.prototype.isTrap = function () {
     return true;
-}
+};
 TrapCell.prototype.render = function () {
     if (!this.covert) {
         this.element.addClass('marked');
     }
+    if (this.highlit > 0) {
+      this.element.css('opacity', this.getHighliteValue());
+    } else {
+      this.element.css('opacity', '');
+    }
     return this.element;
-}
+};

@@ -201,23 +201,23 @@ var LevelService = function() {
 
     return {
         getLevel: renderLevel,
-        getSurroundingTrapCount: function(x, y, depth) {
-            return getCells(x, y, depth, function(cell) {
-                return typeof cell.isTrap === 'function' && cell.isTrap();
+        getSurroundingTrapCount: function(cell) {
+            return getCells(cell.x, cell.y, cell.searchDepth, function(surroundedCell) {
+                return typeof surroundedCell.isTrap === 'function' && surroundedCell.isTrap() && !cell.compare(surroundedCell);
             }, function(elements) {
                return elements.length;
             });
         },
-        highliteSurroundingCells: function(x, y, depth) {
-            return getCells(x, y, depth, function(cell) {
-                return !!cell;
+        highliteSurroundingCells: function(cell) {
+            return getCells(cell.x, cell.y, cell.searchDepth, function(surroundedCell) {
+                return !!surroundedCell && !cell.compare(surroundedCell);
             }, function(elements) {
                 $.each(elements, function() { this.highlite(); });
             });
         },
-        unliteSurroundingCells: function(x, y, depth) {
-            return getCells(x, y, depth, function(cell) {
-                return !!cell;
+        unliteSurroundingCells: function(cell) {
+            return getCells(cell.x, cell.y, cell.searchDepth, function(surroundedCell) {
+                return !!surroundedCell && !cell.compare(surroundedCell);
             }, function (elements) {
                 $.each(elements, function () { this.unlite(); })
             });

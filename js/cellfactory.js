@@ -124,7 +124,7 @@ var CellFactory = function() {
 
             calculate = function() {
                 if (this.content === false) {
-                    this.content = LevelService.getSurroundingTrapCount(this.x, this.y, 1);
+                    this.content = LevelService.getSurroundingTrapCount(this);
                 }
                 return this.content;
             };
@@ -160,7 +160,7 @@ var CellFactory = function() {
 
             calculate = function() {
                 if (this.content === false) {
-                    this.content = LevelService.getSurroundingTrapCount(this.x, this.y, 1);
+                    this.content = LevelService.getSurroundingTrapCount(this);
                 }
                 return this.content;
             };
@@ -172,64 +172,6 @@ var CellFactory = function() {
             isTrap: isTrap
         }
     }();
-
-    /*HintTrapCell.prototype = function() {
-        var init = function() {
-                var t = this;
-                t.content = null;
-                t.element = createElement.call(t);
-                t.depth = 2;
-                if (!t.marked) {
-                    registerMouseHandler.call(t, hintLeftClickHandler);
-                } else {
-                    registerMouseHandler.call(t, trapLeftClickHandler, rightClickHandler);
-                }
-                $(document).on('levelParsed', function() {
-                    t.initialized = true;
-                    t.render();
-                });
-            },
-
-            render = function() {
-                if (!this.marked && this.initialized) {
-                    this.element.find('span').html(calculate.call(this));
-                    this.element.addClass('marked');
-                }
-                return this.element;
-            },
-
-            calculate = function() {
-                if (this.content === null) {
-                    this.content = LevelService.getSurroundingTrapCount(this.x, this.y, this.depth);
-                }
-                return this.content;
-            },
-
-            trapLeftClickHandler = function() {
-                this.element.addClass('marked');
-                unregisterMouseHandler.call(this);
-                registerMouseHandler.call(this, hintLeftClickHandler);
-                game.decreaseTrapCounter();
-                this.marked = false;
-                this.render();
-            },
-
-            hintLeftClickHandler = function () {
-              LevelService.highliteSurroundingCells(this.x, this.y, this.depth);
-            },
-
-            rightClickHandler = function() {
-                game.increaseFaultCounter();
-                Animations.shake.call(this.element, 3);
-            };
-
-        return {
-            init: init,
-            render: render,
-            isTrap: isTrap,
-            highlite: highlite
-        };
-    }();*/
 
     return {
         create: create

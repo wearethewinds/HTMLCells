@@ -8,7 +8,7 @@ var BasicCell = function () {
     this.highlit = 0;
     this.searchDepth = 1;
     this._init();
-}
+};
 
 BasicCell.prototype = function () {
 
@@ -16,7 +16,7 @@ BasicCell.prototype = function () {
         this.unregisterLeftClick();
         this.unregisterRightClick();
         this.element = null;
-    }
+    };
 
     var _init = function () {
         var t = this;
@@ -25,34 +25,39 @@ BasicCell.prototype = function () {
             t.initialized = true;
             t.render();
         });
-    }
+    };
 
     var calculate = function () {
         if (this.content === '') {
-            this.content = LevelService.getSurroundingTrapCount(this.x, this.y, this.searchDepth);
+            this.content = LevelService.getSurroundingTrapCount(this);
         }
         return this.content;
-    }
+    };
+
+    var compare = function (cell) {
+      if (!cell.hasOwnProperty('x') || !cell.hasOwnProperty('y')) { return false; }
+      return cell.x === this.x && cell.y === this.y;
+    };
 
     var createElement = function () {
         var element = $(document.createElement('li'));
         element.append(document.createElement('span'));
         element.addClass('hex');
         return element;
-    }
+    };
 
     var getHighliteValue = function () {
         return .5 - (Math.log(this.highlit) / 2);
-    }
+    };
 
     var highlite = function () {
         ++this.highlit;
         this.render();
-    }
+    };
 
     var isTrap = function () {
         return false;
-    }
+    };
 
     var registerLeftClick = function (event) {
         var t = this;
@@ -74,7 +79,7 @@ BasicCell.prototype = function () {
                 event.call(t);
             });
         }
-    }
+    };
 
     var render = function  () {
         if (!this.covert && this.initialized) {
@@ -96,17 +101,18 @@ BasicCell.prototype = function () {
 
     var unregisterLeftClick = function () {
         this.element.off('click');
-    }
+    };
 
     var unregisterRightClick = function () {
         this.element.off('contextmenu');
-    }
+    };
 
 
     return {
         _detroy: _destroy,
         _init: _init,
         calculate: calculate,
+        compare: compare,
         createElement: createElement,
         getHighliteValue: getHighliteValue,
         highlite: highlite,
