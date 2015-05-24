@@ -3,14 +3,14 @@ var LevelService = function() {
     var currentLevel = false;
     //LEVEL 1
     levels.push([
-        [' ',' ','O',' ',' '],
+        [' ',' ','_O',' ',' '],
         [' ','X','X', ' '],
-        ['O','_O','X','X','O'],
-        ['_O','_O','_O','X'],
-        ['_O','X','_O','X','_O'],
-        ['X','_O','_O','_O'],
-        ['X','_O','O','_O','_O'],
-        ['_O','_O','_O','_O']
+        ['_O','O','X','X','_O'],
+        ['O','O','O','X'],
+        ['O','X','O','X','O'],
+        ['X','O','O','O'],
+        ['X','O','_O','O','O'],
+        ['O','O','O','O']
     ]);
     levels.push([
         [' ', ' ', 'O', ' ', ' '],
@@ -32,19 +32,19 @@ var LevelService = function() {
         [' ', ' ', 'X', ' ', ' ']
     ]);
     levels.push([
-        [' ', '_O', ' ', '_O', ' ', ' '],
-        [' ', '_O', 'X', ' ', ' '],
-        [' ', 'C', 'X', 'C', '_O', ' '],
+        [' ', 'O', ' ', 'O', ' ', ' '],
+        [' ', 'O', 'X', ' ', ' '],
+        [' ', '_C', 'X', '_C', 'O', ' '],
         [' ', 'X', 'X', ' ', 'X'],
-        [' ', 'X', '_C', '_O', 'C', '_O'],
+        [' ', 'X', 'C', 'O', '_C', 'O'],
         [' ', ' ', ' ', ' ', 'X'],
-        ['_O', ' ', '_O', ' ', 'X', 'C'],
+        ['O', ' ', 'O', ' ', 'X', '_C'],
         ['X', ' ', ' ', ' ', 'X'],
-        ['C', ' ', '_O', '_O', '_C', ' '],
-        ['X', '_O', ' ', '_O', 'X'],
-        ['X', ' ', 'X', '_O', ' ', ' '],
-        ['C', '_O', 'X', '_O', ' '],
-        ['_O', ' ', 'C', 'C', ' ', ' '],
+        ['_C', ' ', 'O', 'O', 'C', ' '],
+        ['X', 'O', ' ', 'O', 'X'],
+        ['X', ' ', 'X', 'O', ' ', ' '],
+        ['_C', 'O', 'X', 'O', ' '],
+        ['O', ' ', '_C', '_C', ' ', ' '],
         [' ', ' ', 'X', ' ', ' ']
     ]);
     levels.push([
@@ -62,7 +62,16 @@ var LevelService = function() {
 
         var levelMap = false,
             renderedLevel = $(document.createElement('section')).attr('id', 'gameboard'),
-            trapCount = 0;
+            trapCount = 0,
+            row = null,
+            cell = null;
+        if (currentLevel) {
+            for (row = currentLevel.length - 1; row >= 0; --row) {
+                for(cell = currentLevel[row].length - 1; cell >= 0; --cell) {
+                    currentLevel[row][cell]._destroy;
+                }
+            }
+        }
         // Step 1: parse array, and create objects
         currentLevel = [];
         if (!isNaN(level)) {
@@ -72,10 +81,10 @@ var LevelService = function() {
         }
         if (!levelMap) return '';
         for (var rows = 0, max = levelMap.length; rows < max; ++rows) {
-            var cellRow = [],
-                row = renderRow();
+            var cellRow = [];
+            row = renderRow();
             for (var elem = 0, max2 = levelMap[rows].length; elem < max2; ++elem) {
-                var cell = CellFactory.create(elem, rows, levelMap[rows][elem]);
+                cell = CellFactory.create(elem, rows, levelMap[rows][elem]);
                 if (cell && cell.isTrap()) { trapCount += 1; }
                 cellRow.push(cell);
                 row.append(cell.render());
@@ -98,39 +107,37 @@ var LevelService = function() {
             return currentLevel.length > 0 && currentLevel[y][x];
         };
 
-    /*var calculateDirectValue =  function(x, y) {
-        var count = 0;
-        if (y - 2 >= 0 && currentLevel[y - 2].length > x) {
-            if (currentLevel[y - 2][x].isTrap()) { count += 1; }
-        }
-        if (y + 2 < currentLevel.length && currentLevel[y + 2].length > x) {
-            if (currentLevel[y + 2][x].isTrap()) { count += 1; }
-        }
-        if (y + 1 < currentLevel.length && currentLevel[y + 1].length > x) {
-            if (currentLevel[y + 1][x].isTrap()) { count += 1; }
-        }
-        if (y - 1 >= 0 && currentLevel[y - 1].length > x) {
-            if (currentLevel[y - 1][x].isTrap()) { count += 1; }
-        }
-        if (y % 2 === 1) {
-            if (y - 1 >= 0 && currentLevel[y - 1].length > x + 1) {
-                if (currentLevel[y - 1][x + 1].isTrap()) { count += 1; }
-            }
-            if (y + 1 < currentLevel.length && currentLevel[y + 1].length > x + 1) {
-                if (currentLevel[y + 1][x + 1].isTrap()) { count += 1; }
-            }
-        } else {
-            if (y - 1 >= 0 && currentLevel[y - 1].length > x - 1 && x - 1 >= 0) {
-                if (currentLevel[y - 1][x - 1].isTrap()) { count += 1; }
-            }
-            if (y + 1 < currentLevel.length && currentLevel[y + 1].length > x - 1 && x - 1 >= 0) {
-                if (currentLevel[y + 1][x - 1].isTrap()) { count += 1; }
+    var getCellsOnLine = function(x,y, direction,condition, callback) {
+        var elements = [],
+            elemCount = 0,
+            elem = null,
+            rows = null,
+            newX = 0;
+        if (direction === 'SOUTH') {
+            for (rows = y; rows <= currentLevel.length - 1; rows += 2) {
+                if (x < currentLevel[rows].length && condition(currentLevel[rows][x])) { elements.push(currentLevel[rows][x]); }
             }
         }
-        return count;
-    };*/
+        if (direction === 'SOUTHEAST') {
+            newX = x;
+            for (rows = y; rows <= currentLevel.length - 1; ++rows) {
+                console.log(currentLevel[rows][newX]);
+                if (newX < currentLevel[rows].length && condition(currentLevel[rows][newX])) { elements.push(currentLevel[rows][newX]); }
+                if (rows % 2 === 1) { ++newX; }
+            }
+        }
+        if (direction === 'SOUTHWEST') {
+            newX = x;
+            for (rows = y; rows <= currentLevel.length - 1; ++rows) {
+                if (newX >= 0 && condition(currentLevel[rows][newX])) { elements.push(currentLevel[rows][newX]); }
+                if (rows % 2 === 0) { --newX; }
+            }
+        }
 
-    var getCells = function(x, y, depth, condition, callback) {
+        return callback(elements);
+    },
+
+    getSurroundingCells = function(x, y, depth, condition, callback) {
         var elements = [],
             elemCount = 0,
             newX = 0,
@@ -201,25 +208,40 @@ var LevelService = function() {
 
     return {
         getLevel: renderLevel,
+        checkCompleteness: function () {
+            for (var row = currentLevel.length - 1; row >= 0; --row) {
+                for(var cell = currentLevel[row].length - 1; cell >= 0; --cell) {
+                    if (currentLevel[row][cell].covert) { return false; }
+                }
+            }
+            return true;
+        },
+        getHintOnLine: function (cell, direction) {
+            return getCellsOnLine(cell.x, cell.y, direction, function(cellOnLine) {
+                return typeof cellOnLine.isTrap === 'function' && cellOnLine.isTrap();
+            }, function(elements) {
+                console.log(elements.length);
+            })
+        },
         getSurroundingTrapCount: function(cell) {
-            return getCells(cell.x, cell.y, cell.searchDepth, function(surroundedCell) {
+            return getSurroundingCells(cell.x, cell.y, cell.searchDepth, function(surroundedCell) {
                 return typeof surroundedCell.isTrap === 'function' && surroundedCell.isTrap() && !cell.compare(surroundedCell);
             }, function(elements) {
                return elements.length;
             });
         },
         highliteSurroundingCells: function(cell) {
-            return getCells(cell.x, cell.y, cell.searchDepth, function(surroundedCell) {
+            return getSurroundingCells(cell.x, cell.y, cell.searchDepth, function(surroundedCell) {
                 return !!surroundedCell && !cell.compare(surroundedCell);
             }, function(elements) {
-                $.each(elements, function() { this.highlite(); });
+                $.each(elements, function(i) { var t = this; setTimeout(function() { t.highlite(); }, i * 15); });
             });
         },
         unliteSurroundingCells: function(cell) {
-            return getCells(cell.x, cell.y, cell.searchDepth, function(surroundedCell) {
+            return getSurroundingCells(cell.x, cell.y, cell.searchDepth, function(surroundedCell) {
                 return !!surroundedCell && !cell.compare(surroundedCell);
             }, function (elements) {
-                $.each(elements, function () { this.unlite(); })
+                $.each(elements, function (i) { var t = this; setTimeout(function() { t.unlite(); }, i * 15); })
             });
         },
         getCellAt: getCellAt

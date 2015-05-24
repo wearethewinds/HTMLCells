@@ -7,6 +7,10 @@ Game.prototype = function() {
     var faultbox = false,
         trapbox = false,
 
+        checkLevel = function () {
+          return LevelService.checkCompleteness();
+        },
+
         createBox = function(id, header) {
             var box = $(document.createElement('section'))
                     .attr('id', id)
@@ -53,7 +57,6 @@ Game.prototype = function() {
 
         setLevel = function(level) {
             $('#gameboard').remove();
-
             $('body').append(LevelService.getLevel(level));
         };
 
@@ -62,10 +65,18 @@ Game.prototype = function() {
         updateTrapCounter: updateTrapCounter,
         decreaseTrapCounter: decreaseTrapCounter,
         increaseFaultCounter: increaseFaultCounter,
-        setLevel: setLevel
+        setLevel: setLevel,
+        checkLevel: checkLevel
     };
 }();
 
-var game = new Game();
+var game = new Game(),
+currentLevel = 1;
 game.init()
-    .setLevel(4);
+    .setLevel(currentLevel);
+$('.hex').on('click contextmenu', function () {
+    if (game.checkLevel()) {
+        game.init()
+            .setLevel(++currentLevel);
+    }
+});

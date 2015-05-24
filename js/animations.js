@@ -9,7 +9,7 @@ var Animations = {
                 delay: 0.1,
                 ease: 'Expo.easeInOut',
                 onComplete: function() {
-                    t.removeAttr('style');
+                    t.css('transform', '');
                 }
             });
     }

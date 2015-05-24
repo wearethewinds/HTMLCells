@@ -3,6 +3,7 @@ var BasicCell = function () {
     this.x = args.x;
     this.y = args.y;
     this.content = '';
+    this.symbol = '';
     this.covert = args.covert;
     this.element = null;
     this.highlit = 0;
@@ -27,6 +28,10 @@ BasicCell.prototype = function () {
         });
     };
 
+    var addHint = function (direction) {
+
+    };
+
     var calculate = function () {
         if (this.content === '') {
             this.content = LevelService.getSurroundingTrapCount(this);
@@ -47,7 +52,8 @@ BasicCell.prototype = function () {
     };
 
     var getHighliteValue = function () {
-        return .5 - (Math.log(this.highlit) / 2);
+        console.log(this.highlit);
+        return (1.7 - (Math.log(this.highlit + 1))) / 1.7;
     };
 
     var highlite = function () {
@@ -82,16 +88,11 @@ BasicCell.prototype = function () {
     };
 
     var render = function  () {
-        if (!this.covert && this.initialized) {
-            this.element.find('span').html(calculate.call(this));
-            this.element.addClass('open');
-        }
         if (this.highlit > 0) {
             this.element.css('opacity', this.getHighliteValue());
         } else {
             this.element.css('opacity', '');
         }
-        return this.element;
     };
 
     var unlite = function () {
@@ -109,8 +110,9 @@ BasicCell.prototype = function () {
 
 
     return {
-        _detroy: _destroy,
+        _destroy: _destroy,
         _init: _init,
+        addHint: addHint,
         calculate: calculate,
         compare: compare,
         createElement: createElement,
